@@ -4,7 +4,7 @@
   "description": "Search files/import-export",
   "main": "index.js",
   "scripts": {
-		"start": "cross-env EXT=['.txt','.js'] node app.js --colors=['cyan'] --deep=0 --path='./dir'",
+		"start": "cross-env EXT='[\".txt\",\".js\"]' node app.js --colors=['cyan'] --deep=0 --path='./dir'",
 		"start:alt": "cross-env EXT=[] node app.js --colors=['red','green','blue'] --deep=2 --path='./another-dir'"
   },
   "keywords": [],
