@@ -50,7 +50,7 @@ function recursive(currentPath, level = 0) {
 
 module.exports = function showFiles(dirPath, deep, ext) {
 	dirPath =	typeof dirPath === 'string' &&
-			(path.isAbsolute(dirPath) ? dirPath : path.join(__dirname, dirPath)) ||	'./';
+			(path.isAbsolute(dirPath) ? dirPath : path.join(__dirname, dirPath)) ||	('.' + path.sep);
 	params.deep = typeof deep === 'number' && deep || 0;
 	params.ext = Array.isArray(ext) && ext || [];
 
