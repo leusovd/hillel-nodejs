@@ -38,7 +38,7 @@ module.exports = class Finder extends EventEmitter {
 		this.emit('started');
 		console.time('Search Time');
 
-		// Internal timer to check if idle has been happened
+		// Internal timer to check if an idle has been happened
 		this.timer = setInterval(() => {
 			if (this.timePassed !== 0 && !(this.timePassed % 2000)) {
 				this.emit('processing', {
@@ -59,6 +59,7 @@ module.exports = class Finder extends EventEmitter {
 	}
 
 	async recursive(currentPath, level = 0) {
+		let checked = false;
 		
 		// Get promise with a list of dirents
 		const direntList = await readdirp(currentPath, {withFileTypes: true});
@@ -68,23 +69,26 @@ module.exports = class Finder extends EventEmitter {
 			if (
 				dirent.isFile() &&
 				(this.ext.includes(path.extname(dirent.name)) || !this.ext.length)
-			) {
-				this.filesChecked++;
-
+			) {			
 				if (dirent.name.includes(this.entry)) {
+					// Increment count of checked files that accept defined criterias
+					this.filesChecked++;
+
+					// Increment count of checked directories that accept defined criterias
+					if (!checked) this.dirsChecked++;			
+
 					this.emit('file', {
-						filePath: currentPath + dirent.name
+						filePath: path.join(currentPath, dirent.name)
 					});
+
 					this.timePassed = 0;
 				}				
 			}
 
 
 			if (dirent.isDirectory() && ++level !== this.deep) {
-				this.dirsChecked++;
-
 				try {
-					await this.recursive(currentPath + path.sep + dirent.name, level++);
+					await this.recursive(path.join(currentPath, dirent.name), level++);
 				} catch(err) {
 					console.log(err);
 					return;
