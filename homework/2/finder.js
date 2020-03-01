@@ -5,6 +5,8 @@ const fs = require('fs');
 const { promisify } = require('util');
 const readdirp = promisify(fs.readdir);
 
+const INTERVAL = 2000;
+
 module.exports = class Finder extends EventEmitter {
 	constructor(dir, deep, ext, entry) {
 		super();
@@ -32,17 +34,7 @@ module.exports = class Finder extends EventEmitter {
 	}
 
 	parse() {
-		// Internal timer to check if an idle has been happened
-		this.timer = setInterval(() => {
-			if (this.timePassed !== 0 && !(this.timePassed % 2000)) {
-				this.emit('processing', {
-					dirsChecked: this.dirsChecked,
-					filesChecked: this.filesChecked
-				});
-			}
-
-			this.timePassed += this.i;
-		}, this.i);
+		this.setTimer();
 
 		// Main logic
 		try {
@@ -52,7 +44,7 @@ module.exports = class Finder extends EventEmitter {
 		}
 
 		// Parsing has been finished
-		clearInterval(this.timer);
+		clearTimeout(this.timer);
 		this.emit('finished');
 		console.timeEnd('Search Time');
 	}
@@ -71,6 +63,8 @@ module.exports = class Finder extends EventEmitter {
 			) {
 
 				if (dirent.name.includes(this.entry)) {
+					this.setTimer();
+
 					// Increment count of checked files that accept defined criterias
 					this.filesChecked++;
 
@@ -95,5 +89,19 @@ module.exports = class Finder extends EventEmitter {
 
 			}
 		}		
+	}
+
+	setTimer() {
+		if (this.timer) {
+			clearTimeout(this.timer);
+		} else {
+			this.timer = setTimeout(() => {
+			this.emit('processing', {
+					dirsChecked: this.dirsChecked,
+					filesChecked: this.filesChecked
+				});
+			this.setTimer();
+		}, INTERVAL);
+		}	
 	}
 }
