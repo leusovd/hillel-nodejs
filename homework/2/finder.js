@@ -26,18 +26,12 @@ module.exports = class Finder extends EventEmitter {
 
 		// Emit events after listeners have been added
 		process.nextTick(() => {
-			try {				
-				this.init();
-			} catch(err) {
-				console.error(err);
-			}
+			this.emit('started');
+			console.time('Search Time');
 		});
 	}
 
-	async init() {
-		this.emit('started');
-		console.time('Search Time');
-
+	parse() {
 		// Internal timer to check if an idle has been happened
 		this.timer = setInterval(() => {
 			if (this.timePassed !== 0 && !(this.timePassed % 2000)) {
@@ -50,9 +44,14 @@ module.exports = class Finder extends EventEmitter {
 			this.timePassed += this.i;
 		}, this.i);
 
-		//Main logic
-		await this.recursive(this.dir);
+		// Main logic
+		try {
+			await this.recursive(this.dir);
+		} catch(e) {
+			this.emit('error', e);
+		}
 
+		// Parsing has been finished
 		clearInterval(this.timer);
 		this.emit('finished');
 		console.timeEnd('Search Time');
@@ -69,33 +68,32 @@ module.exports = class Finder extends EventEmitter {
 			if (
 				dirent.isFile() &&
 				(this.ext.includes(path.extname(dirent.name)) || !this.ext.length)
-			) {			
+			) {
+
 				if (dirent.name.includes(this.entry)) {
 					// Increment count of checked files that accept defined criterias
 					this.filesChecked++;
 
 					// Increment count of checked directories that accept defined criterias
-					if (!checked) this.dirsChecked++;			
+					if (!checked) this.dirsChecked++;
 
 					this.emit('file', {
 						filePath: path.join(currentPath, dirent.name)
 					});
 
 					this.timePassed = 0;
-				}				
-			}
+				}
 
+			} else if (dirent.isDirectory() && ++level !== this.deep) {
 
-			if (dirent.isDirectory() && ++level !== this.deep) {
 				try {
 					await this.recursive(path.join(currentPath, dirent.name), level++);
-				} catch(err) {
-					console.log(err);
+				} catch (err) {
+					this.emit('error', e);
 					return;
 				}
-			}
 
-		}
-		
+			}
+		}		
 	}
 }

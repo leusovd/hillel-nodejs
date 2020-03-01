@@ -9,6 +9,7 @@ const finder = new Finder(path, deep, ext, s);
 
 finder.on('started', () => {
 	console.log('FINDER STARTED!');
+	finder.parse();
 });
 
 finder.on('file', data => {

@@ -40,7 +40,7 @@ exports.getArgs = () => {
 	}, {});
 };
 
-exports.getExtEnv = () => {
+exports.EXT = () => {
 	const raw = process.env.EXT;
 	let ext;
 
