@@ -156,10 +156,12 @@ module.exports = class Finder extends EventEmitter {
 						const symbolsBefore =
 							index > 20 ? str.slice(index - 20, index) : str.slice(0, index);
 
+						const wordLastSymIndex = index + this.search.length;
+
 						const symbolsAfter =
-							str.length > index + 20
-								? str.slice(index, index + 20)
-								: str.slice(index);
+							str.length > wordLastSymIndex + 20
+								? str.slice(wordLastSymIndex, wordLastSymIndex + 20)
+								: str.slice(wordLastSymIndex);
 
 						const data = `\npath: ${pathToFile}\nsymbolsBefore: ${symbolsBefore}\nsymbolsAfter: ${symbolsAfter}\n`;
 
