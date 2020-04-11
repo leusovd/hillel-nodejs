@@ -11,8 +11,45 @@ module.exports = function index() {
 			<link rel="stylesheet" href="assets/css/style.css">
 		</head>
 		<body>
-			<h1>Messanger</h1>
+			
 			<div id="messanger" class="messanger">
+				<div class="messanger_header">
+					<h1 class="messanger_title">Messanger</h1>
+					<button id="settings-trigger" class="btn">Settings</button>
+				</div>
+
+				<div class="messanger_settings settings">
+					<h2 class="settings_title">Settings</h2>
+
+					<form class="settings_form">
+
+						<div class="settings_field">
+							<h3 class="settings_field-title">Sort params</h3>
+							<select id="settings-sort-value" name="sort-value">
+								<option disabled>Sort value</option>
+							</select>
+							<select id="settings-sort-dir" name="sort-dir" required>		
+								<option disabled>Sort dir</option>					
+								<option value="asc" selected>asc</option>						
+								<option value="desc">desc</option>						
+							</select>
+						</div>
+
+						<div class="settings_field">
+							<h3 class="settings_field-title">Limit</h3>
+							<input id="settings-limit" name="limit" type="number" min="0" max="51">
+						</div>
+
+						<div class="settings_field">
+							<h3 class="settings_field-title">Skip</h3>
+							<input id="settings-skip" name="skip" type="number" min="0" max="501">
+						</div>
+
+						<button id="settings-submit" class="btn" type="submit">Save</button>
+
+					</form>
+				</div>
+
 				<ul class="message-list"></ul>
 				<form class="form">
 					<textarea class="form_textarea" name="message"></textarea>

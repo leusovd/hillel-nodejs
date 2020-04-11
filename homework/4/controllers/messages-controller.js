@@ -5,17 +5,19 @@ exports.get = function (res, { resolve, parsedRoute }) {
 
 	if (parsedRoute.segments.length === 1) {
 
-		const allMessages = messageService.getAll();
+		const allMessages = messageService.getAll(parsedRoute.params);
 		const statusCode = 200;
 
 		res.setHeader('Content-Type', 'application/json;charset=utf8;');
 		res.statusCode = statusCode;
-		res.write(JSON.stringify(allMessages));
+		res.write(JSON.stringify({
+			status: 'ok',
+			content: allMessages
+		}));
 		res.end();
 		resolve({statusCode});
-		return;
 
-	} else if (typeof parseInt(parsedRoute.segments[1]) === 'number') {
+	} else if (!isNaN(+parsedRoute[1])) {
 
 		const id = parseInt(parsedRoute.segments[1]);
 		const message = messageService.getById(id);
@@ -32,11 +34,48 @@ exports.get = function (res, { resolve, parsedRoute }) {
 
 		res.setHeader('Content-Type', 'application/json;charset=utf8;');
 		res.statusCode = statusCode;
-		res.write(JSON.stringify(message));
+		res.write(JSON.stringify({
+			status: 'ok',
+			content: message
+		}));
 		res.end();
 		resolve({statusCode});
-		return;
 
+	} 
+	else if (parsedRoute.segments[1] === 'fields') {
+
+		const statusCode = 200;
+		const fields = Message.getFields();
+
+		res.setHeader('Content-Type', 'application/json;charset=utf8;');
+		res.statusCode = statusCode;
+		res.write(JSON.stringify({
+			status: 'ok',
+			content: fields
+		}));
+		res.end();
+		resolve({statusCode});
+
+	} 
+	else if (parsedRoute.segments[1] === 'settings') {
+
+		const statusCode = 200;
+
+		res.setHeader('Content-Type', 'application/json;charset=utf8;');
+		res.statusCode = statusCode;
+		res.write(JSON.stringify({
+			status: 'ok',
+			content: {
+				sort: {
+					value: "date",
+					dir: "asc"
+				},
+				limit: 10,
+				skip: 0
+			}
+		}));
+		res.end();
+		resolve({statusCode});
 	}
 }
 
@@ -44,7 +83,10 @@ exports.post = function (res, { resolve, body, parsedRoute }) {
 	if (!body || !body.text) {
 		const statusCode = 400;
 		res.statusCode = statusCode;
-		res.end('Bad request: Message is not defined.');
+		res.end(JSON.stringify({
+			status: 'error',
+			message: 'Bad request: Message is not defined.'
+		}));
 		resolve({statusCode});
 		return;
 	}
@@ -54,7 +96,10 @@ exports.post = function (res, { resolve, body, parsedRoute }) {
 	messageService.post(message);
 	const statusCode = 200;
 	res.statusCode = statusCode;
-	res.write(JSON.stringify(message));
+	res.write(JSON.stringify({
+		status: 'ok',
+		content: message
+	}));
 	res.end();
 	resolve({statusCode});
 }
@@ -106,7 +151,7 @@ exports.put = function (res, { resolve, body, parsedRoute }) {
 	res.statusCode = statusCode;
 	res.write(JSON.stringify({
 		status: 'ok',
-		data: newMessage
+		content: newMessage
 	}));
 	res.end();
 	resolve({statusCode});

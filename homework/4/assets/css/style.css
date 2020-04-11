@@ -4,7 +4,7 @@ body {
 	background-color: #ebebeb;
 }
 
-p {
+p,h1,h2,h3 {
 	margin: 0;
 	padding: 0;
 }
@@ -16,8 +16,30 @@ ul {
 }
 
 .messanger {
+	position: relative;
 	max-width: 600px;
 	width: 100%;
+	font-family: sans-serif;
+}
+
+.messanger_header {
+	display: flex;
+	align-items: center;
+	padding: 5px;
+}
+
+.messanger_title {
+	margin-right: 10px;
+}
+
+.messanger_settings {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	color: white;
+	background-color: #3B4045;
 }
 
 .message-list {
@@ -118,4 +140,21 @@ ul {
 
 .btn:hover {
 	background-color: #71777C;
+}
+
+/* Settings */
+.settings {
+	display: none;
+	flex-direction: column;
+	padding: 15px;
+}
+
+.settings_title {
+	font-size: 32px;
+	line-height: 48px;
+	margin-bottom: 25px;
+}
+
+.settings_field {
+	margin-bottom: 20px;
 }

@@ -18,8 +18,14 @@ class MessageService {
 		return this.messages.find(message => parseInt(message.id) === parseInt(id));
 	}
 
-	getAll() {
-		return this.messages;
+	getAll(options = {}) {
+		const limit = (isNaN(+options.limit) ? null : +options.limit ) || 10;
+		const skip = (isNaN(+options.skip) ? null : +options.skip ) || 0;
+		
+		let result = this.sort(options.sortValue, options.sort);
+		result = result.slice(skip, (skip + limit));
+		
+		return result;
 	}
 
 	post(message) {
@@ -41,6 +47,19 @@ class MessageService {
 			...this.messages.slice(0, oldMessageIndex),
 			...this.messages.slice(oldMessageIndex + 1)
 		];
+	}
+
+	sort(value = 'date', dir = 'asc') {
+		value = value !== 'id' && value !== 'date' && value !== 'text' ? 'date' : value;
+		dir = dir !== 'asc' && dir !== 'desc' ? 'asc' : dir;
+		let messages = this.messages.slice();
+		messages = value === 'text' ? messages.sort() : messages.sort((a, b) => (a - b));
+
+		if (dir === 'desc') {
+			messages = messages.reverse();
+		}
+
+		return messages;
 	}
 }
 

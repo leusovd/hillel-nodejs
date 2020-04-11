@@ -73,13 +73,148 @@ class Message {
 	}
 }
 
+class Settings {
+	constructor() {
+		this.$root = document.querySelector('.messanger_settings');
+		this.$form = this.$root.querySelector('.settings_form');
+		this.$trigger = document.getElementById('settings-trigger');
+		this.$saveBtn = document.getElementById('settings-submit');
+
+		// Form fields
+		this.$sortValueSelect = document.getElementById('settings-sort-value');
+		this.$sortDirSelect = document.getElementById('settings-sort-dir');
+		this.$limit = document.getElementById('settings-limit');
+		this.$skip = document.getElementById('settings-skip');
+		
+		this.values = {
+			sort: {
+				value: null,
+				dir: null
+			},
+			limit: null,
+			skip: null
+		};
+
+		this.init();
+	}
+
+	init() {
+		this.getSortValues();
+		this.getDefaults();
+		this.addListeners();
+	}
+
+	getSortValues() {
+		fetch('http://localhost:3000/messages/fields')
+			.then(res => res.json())
+			.then(data => {
+				if (data.status === 'ok') {
+					data.content.forEach(value => {
+						const option = document.createElement('option');
+						option.value = value;
+						option.textContent = value;
+						this.$sortValueSelect.append(option);
+					});
+				}
+			});
+	}
+
+	getDefaults() {
+		fetch('http://localhost:3000/messages/settings')
+			.then(res => res.json())
+			.then(data => {
+				if (data.status === 'ok') {
+					this.values = data.content;
+
+					this.setFieldValues();
+				}
+			});
+	}
+
+	setFieldValues() {
+		this.$sortValueSelect
+			.querySelector(`option[value="${this.values.sort.value}"]`)
+			.setAttribute('selected', true);
+
+		this.$sortDirSelect
+			.querySelector(`option[value="${this.values.sort.dir}"]`)
+			.setAttribute('selected', true);
+
+		this.$limit.value = this.values.limit;
+
+		this.$skip.value = this.values.skip;
+	}
+
+	addListeners() {
+		this.$trigger.addEventListener('click', e => {
+			e.preventDefault();
+
+			this.$root.style.display = 'flex';
+		});
+
+		this.$saveBtn.addEventListener('click', e => {
+			e.preventDefault();
+
+			const newSettings = this.getNewSettings();
+			const newSettingsIdentity = this.checkNewSettingsIdentity(newSettings);
+
+			if (!newSettingsIdentity) {
+
+				this.setNewSettings(newSettings);
+				this.setFieldValues();
+				
+				const settingsChangeEvent = new CustomEvent('settingsChange', { detail: {
+					values: this.values
+				}});
+				this.$root.dispatchEvent(settingsChangeEvent);
+
+			}
+			
+
+			this.$root.style.display = 'none';
+		});
+	}
+
+	getNewSettings() {
+		const data = Object.fromEntries(new FormData(this.$form));
+		return data;
+	}
+
+	setNewSettings(settings) {
+		this.values = {
+			sort: {
+				value: settings['sort-value'],
+				dir: settings['sort-dir']
+			},
+			limit: settings['limit'],
+			skip: settings['skip']
+		} 
+	}
+
+	checkNewSettingsIdentity(settings) {
+		const sortValue = settings['sort-value'] === this.values.sort.value;
+		const sortDir = settings['sort-dir'] === this.values.sort.dir;
+		const limit = +settings['limit'] === +this.values.limit;
+		const skip = +settings['skip'] === +this.values.skip;
+
+		if (sortValue && sortDir && limit && skip) {
+			return true;
+		}
+
+		return false;
+	}
+}
+
 class Messanger {
 	constructor() {
 		this.$root = document.getElementById('messanger');
+		this.$form = this.$root.querySelector('.form');
 		this.$textarea = this.$root.querySelector('.form_textarea');
 		this.$sendBtn = this.$root.querySelector('.form_submit');
 		this.$messageListField = this.$root.querySelector('.message-list');
 		this.$errorField = this.$root.querySelector('.form_error');
+
+		this.settings = new Settings();
 		
 		this.messages = [];
 		this.url = 'http://localhost:3000/messages';
@@ -106,15 +241,21 @@ class Messanger {
 			this.sendMessage(text);
 			this.$errorField.style.display = 'none';
 		});
+
+		this.settings.$root.addEventListener('settingsChange', e => {
+			this.onSettingsChanged(e.detail.values);
+		});
 	}
 
 	getMessages() {
 		fetch(this.url)
 			.then(res => res.json())
 			.then(data => {
-				data.forEach(item => {
-					this.addNewMessage(item);
-				});
+				if (data.status === 'ok') {
+					data.content.forEach(item => {
+						this.addNewMessage(item);
+					});
+				}				
 			})
 			.catch(err => {
 				console.error(err);
@@ -131,8 +272,10 @@ class Messanger {
 		}).then(res => {
 			return res.json();
 		}).then(data => {
-			this.addNewMessage(data);
-			this.$textarea.value = '';
+			if (data.status === 'ok') {
+				this.addNewMessage(data.content);
+				this.$textarea.value = '';
+			}			
 		}).catch(err => {
 			console.error(err);
 		});
@@ -176,15 +319,36 @@ class Messanger {
 			method: 'put',
 			body: JSON.stringify({ text })
 		}).then(res => res.json())
-		.then(content => {
-			if (content.status === 'ok') {
-				console.log(this.messages);
+		.then(data => {
+			if (data.status === 'ok') {
 				const message = this.messages.find(message => message.id === id);
-				message.setText(content.data.text);
+				message.setText(data.content.text);
 			}
 		})
 		.catch(err => {
 			console.error(err.message);
+		});
+	}
+
+	onSettingsChanged(values) {
+		fetch(this.url + `?sortValue=${values.sort.value}&sort=${values.sort.dir}&limit=${values.limit}&skip=${values.skip}`)
+		.then(res => res.json())
+		.then(data => {
+			if (data.status === 'ok') {
+				if (data.status === 'ok') {
+					const newMessageList = document.createElement('ul');
+					newMessageList.className = 'message-list';
+
+					this.$messageListField.remove();
+					this.$form.before(newMessageList);
+
+					this.$messageListField = this.$root.querySelector('.message-list');
+
+					data.content.forEach(item => {
+						this.addNewMessage(item);
+					});
+				}	
+			}
 		});
 	}
 }
