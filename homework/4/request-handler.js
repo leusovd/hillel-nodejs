@@ -22,7 +22,7 @@ exports.setIntervalLogging = function () {
 			});	
 
 		}
-	}, 5000);
+	}, 60000);
 }
 
 exports.requestHandler = function (req, res) {
