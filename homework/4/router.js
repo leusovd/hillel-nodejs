@@ -68,8 +68,8 @@ module.exports = function router(req, res) {
 			}			
 
 		} else {
-			const statusCode = 404;
-			const message = 'Not Found';
+			const statusCode = 500;
+			const message = 'Something broke!';
 
 			res.statusCode = statusCode;
 			res.end(message);
