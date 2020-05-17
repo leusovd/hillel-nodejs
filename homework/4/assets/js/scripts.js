@@ -105,7 +105,7 @@ class Settings {
 	}
 
 	getSortValues() {
-		fetch('http://localhost:3000/messages/fields')
+		fetch(`${location.origin}:3000/messages/fields`)
 			.then(res => res.json())
 			.then(data => {
 				if (data.status === 'ok') {
@@ -120,7 +120,7 @@ class Settings {
 	}
 
 	getDefaults() {
-		fetch('http://localhost:3000/messages/settings')
+		fetch(`${location.origin}/messages/settings`)
 			.then(res => res.json())
 			.then(data => {
 				if (data.status === 'ok') {
@@ -217,7 +217,7 @@ class Messanger {
 		this.settings = new Settings();
 		
 		this.messages = [];
-		this.url = 'http://localhost:3000/messages';
+		this.url = `${location.origin}:3000/messages`;
 
 		this.init();
 	}
