@@ -1,0 +1,19 @@
+{
+  "name": "2",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js --name='*.*' --colors=['cyan'] --deep=0 --path='./dir' --search='promise'",
+    "start:alt": "node app.js name='*.json' --colors=['red','green','blue'] --deep=0 --path='./another-dir'"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "chalk": "^3.0.0",
+    "cross-env": "^7.0.0",
+    "file-type": "^14.1.4",
+    "read-chunk": "^3.2.0"
+  }
+}
