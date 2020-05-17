@@ -1,0 +1,160 @@
+body {
+	margin: 0;
+	padding: 100px;
+	background-color: #ebebeb;
+}
+
+p,h1,h2,h3 {
+	margin: 0;
+	padding: 0;
+}
+
+ul {
+	margin: 0;
+	padding: 0;
+	list-style-type: none;
+}
+
+.messanger {
+	position: relative;
+	max-width: 600px;
+	width: 100%;
+	font-family: sans-serif;
+}
+
+.messanger_header {
+	display: flex;
+	align-items: center;
+	padding: 5px;
+}
+
+.messanger_title {
+	margin-right: 10px;
+}
+
+.messanger_settings {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	color: white;
+	background-color: #3B4045;
+}
+
+.message-list {
+	height: 300px;
+	padding: 5px;
+	color: white;
+	background-color: #3B4045;
+	margin-bottom: 20px;
+	overflow-y: scroll;
+}
+
+.message-field {
+	padding: 10px;
+	border-radius: 8px;
+}
+
+.message-field[data-mode="edit"] .message-field_textarea {
+	display: block;
+}
+
+.message-field[data-mode="edit"] .message-field_p {
+	display: none;
+}
+
+.message-field[data-mode="edit"] .message-field_save {
+	display: inline-block;
+}
+
+.message-field[data-mode="edit"] .message-field_edit,
+.message-field[data-mode="edit"] .message-field_delete {
+	display: none;
+}
+
+.message-field:hover {
+	background-color: rgba(40, 46, 51, 0.4);
+}
+
+.message-field_controls {
+	margin-top: 10px;
+}
+
+.message-field_save {
+	display: none;
+}
+
+.message-field_p {
+	margin-top: 5px;
+}
+
+.message-field_textarea {
+	display: none;
+	width: 100%;
+	height: 100px;
+	resize: none;
+}
+
+.form {
+	display: flex;
+	box-sizing: border-box;
+	flex-direction: column;
+	align-items: flex-start;
+	width: 100%;
+	padding: 10px;
+	background-color: #3B4045;
+}
+
+.form_textarea {
+	display: block;
+	box-sizing: border-box;
+	width: 100%;
+	height: 200px;
+	padding: 15px;
+	margin-bottom: 10px;
+	color: white;
+	background-color: #3B4045;
+	resize: none;
+	border: none;
+}
+
+.form_textarea:focus {
+	outline: none;
+}
+
+.form_error {
+	display: none;
+	margin-bottom: 10px;
+	color: white;
+}
+
+.btn {
+	padding: 5px 10px;
+	background-color: #6C7277;
+	border: 1px solid #959BA0;
+	border-radius: 3px;
+	outline: none;
+	cursor: pointer;
+}
+
+.btn:hover {
+	background-color: #71777C;
+}
+
+/* Settings */
+.settings {
+	display: none;
+	flex-direction: column;
+	padding: 15px;
+}
+
+.settings_title {
+	font-size: 32px;
+	line-height: 48px;
+	margin-bottom: 25px;
+}
+
+.settings_field {
+	margin-bottom: 20px;
+}
