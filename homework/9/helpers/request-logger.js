@@ -21,10 +21,10 @@ exports.setIntervalLogging = function () {
 			});	
 
 		}
-	}, 60000);
+	}, 10000);
 }
 
-exports.pushReqData = (ua, statusCode) => {
+exports.pushReqData = (ua, statusCode, duration) => {
 	const request = requests.find(item => item['user-agent'] === ua);
 
 	if (request) {
@@ -38,7 +38,8 @@ exports.pushReqData = (ua, statusCode) => {
 	} else {
 		requests.push({
 			'user-agent': ua,
-			[statusCode]: 1
+            [statusCode]: 1,
+            duration
 		})
 	}
 }
