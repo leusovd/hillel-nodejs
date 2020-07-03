@@ -27,7 +27,7 @@ exports.handleMessagesQueryParams = (req, res, next) => {
     let { sort, sortValue, limit, skip } = req.query;
 
     sort = sort && (typeof sort === 'string') ? sort : 'createdAt';
-    sortValue = sortValue && (sortValue === 'asc' || sortValue === 'desc') ? sortValue : 'desc';
+    sortValue = sortValue && (sortValue === 'asc' || sortValue === 'desc') ? sortValue : 'asc';
 
     const sortOpts = {};
     sortOpts[sort] = sortValue;
@@ -36,7 +36,7 @@ exports.handleMessagesQueryParams = (req, res, next) => {
         sort,
         sortValue,
         sortOpts,        
-        limit: limit && !isNaN(+limit) && limit > 0 && limit < 51 ? +limit : 10,
+        limit: limit && !isNaN(+limit) && limit > 0 && limit < 51 ? +limit : 20,
         skip: skip && !isNaN(+skip) && skip > 0 && skip < 501 ? +skip : 0
     });
 

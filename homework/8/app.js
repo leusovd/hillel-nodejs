@@ -74,7 +74,7 @@ app.get("/register", (req, res) => {
 });
 
 mongoose.connect(
-    "mongodb+srv://user:password@mynode.ftonf.mongodb.net/test",
+    "mongodb+srv://leusovd:qwerty123@mynode.ftonf.mongodb.net/hillel-node",
     {
         useNewUrlParser: true,
         useUnifiedTopology: true,

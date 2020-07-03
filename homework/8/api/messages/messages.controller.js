@@ -31,7 +31,7 @@ exports.getAll = async (req, res, next) => {
 
     try {
         let messageList = await MessageModel
-            .find({ userId })
+            .find()
             .skip(skip)
             .limit(limit)
             .sort(sortOpts)
