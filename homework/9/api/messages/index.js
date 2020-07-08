@@ -1,13 +1,14 @@
 const { Router } = require('express');
 const router = new Router();
 
-const { validate, handleMessagesQueryParams } = require('../middlewares');
+const { validate, handleMessagesQueryParams, authGate } = require('../../middlewares/index.js');
 const { messagePostValidation, messageUpdateValidation } = require('./messages.validations');
-const { getAll, postMessage, updateMessage, deleteMessage } = require('./messages.controller');
+const { getAll, postOne, updateOne, deleteOne, deleteAll } = require('./messages.controller');
 
+router.post('/post', validate(messagePostValidation), postOne);
+router.patch('/update/:id', validate(messageUpdateValidation), updateOne);
+router.delete('/delete', deleteAll);
+router.delete('/delete/:id', deleteOne);
 router.get('/', handleMessagesQueryParams, getAll);
-router.post('/post', validate(messagePostValidation), postMessage);
-router.patch('/update', validate(messageUpdateValidation), updateMessage);
-router.delete('/delete', deleteMessage);
 
 module.exports = router;

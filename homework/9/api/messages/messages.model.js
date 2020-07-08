@@ -3,46 +3,55 @@ const dateFormat = require('dateformat');
 
 const messageSchema = new Schema(
     {
-        text: String,
-        author: {
+        text: {
             type: String,
-            default: "Anonymous",
+            required: true
         },
-        userId: Schema.ObjectId,
-        createdAt: Date,
-        updatedAt: Date,
+        author: {
+            type: Schema.Types.ObjectId,
+            ref: 'UserModel'
+        },
         deletedAt: {
             type: Date,
-            default: null,
-        },
+            default: null
+        }
     },
     {
-        collection: "messages"
+        collection: "messages",
+        timestamps: true
     }
 );
 
 messageSchema.pre('save', function (next) {
-    this.createdAt = dateFormat('isoUtcDateTime');
-    this.updatedAt = dateFormat('isoUtcDateTime');
+    if (this.isNew) {
+        this.createdAt = dateFormat('isoUtcDateTime');
+    }
+
+    if (this.isNew || this.isModified('updatedAt')) {
+        this.updatedAt = dateFormat('isoUtcDateTime');
+    }
+    
     next();
 });
 
 exports.MessageModel = model("MessageModel", messageSchema);
 
-exports.getClientData = (modelObj, userId) => {
-    const { _id, author, text, createdAt } = modelObj;
-    const doesFiveMinutesPast = (Date.now() - new Date(createdAt)) / (1000 * 60) > 5;
-
+exports.formatForResponse = (modelObj) => {
+    const { _id, text, author, createdAt, user } = modelObj;
+    const doesFiveMinutesPast = ((Date.now() - new Date(createdAt)) / (1000 * 60)) > 5;
+    const authorId = author._id ? author._id : author;
+    const authorName = author.person ? author.person.fullname : user.person.fullname;
+    
     // Format date
     let date = new Date(createdAt);
     date = dateFormat(date, 'yyyy-mm-dd hh:MM');
 
     return {
         _id,
-        author,
+        author: authorName,
         text,
         createdAt: date,
-        editable: modelObj.userId.equals(userId) && !doesFiveMinutesPast,
-        deletable: modelObj.userId.equals(userId),
+        editable: authorId.equals(user._id) && !doesFiveMinutesPast,
+        deletable: authorId.equals(user._id)
     };
 };

@@ -5,6 +5,10 @@ $(document).ready(init);
 function init() {
     addEvents();
     initMessenger();
+
+    if ($(document.body).hasClass('-panel')) {
+        initAdminPanelScripts();
+    }
 }
 
 function addEvents() {
@@ -13,8 +17,19 @@ function addEvents() {
 
 function initMessenger() {
     if (!$('#messenger').length) return;
-
     messenger = new Messenger();
+}
+
+function initAdminPanelScripts() {
+    if ($(document.body).hasClass('-adminAccountDetails')) {
+        if (typeof AccountMessages !== 'undefined') {
+            const accountMessages = new AccountMessages();
+        }
+
+        if (typeof Account !== 'undefined') {
+            const account = new Account();
+        }
+    }
 }
 
 function addLogoutEvent() {

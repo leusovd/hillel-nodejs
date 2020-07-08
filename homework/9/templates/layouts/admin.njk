@@ -10,18 +10,26 @@
         {% block pageCss %}{% endblock %}
     </head>
 
-    <body class="body{{ ' -' ~ active }}">
+    <body class="body{{ ' -' ~ active }}{% if pageName %}{{ ' -' ~ pageName }}{% endif %}">
 
         {# Header #}
         {% include 'partials/header.njk' %}
 
-        <div class="site-content">
-            {% block content %}{% endblock %}
+        <div class="panel">
+            <div class="container">
+                <div class="row no-gutters">
+                    <div class="col">
+                        <div class="panel-content">
+                            {% block content %}{% endblock %}
+                        </div>
+                    </div>
+                </div>
+
+            </div>
         </div>
 
         {# Site Js #}
         {% include 'partials/siteJs.njk' %}
         {% block pageJs %}{%endblock%}
-
         </body>
     </html>

@@ -1,10 +1,12 @@
 const { Router } = require('express');
 const router = new Router();
 
-const { validate } = require('../middlewares');
-const { userCreateValidation } = require('./users.validations');
-const { userCreate } = require('./users.controller');
+const { validate } = require('../../middlewares/index.js');
+const { createValidation, updateValidation } = require('./users.validations');
+const { getAll, createOne, updateOne } = require('./users.controller');
 
-router.post('/create', validate(userCreateValidation), userCreate);
+router.get('/', getAll);
+router.post('/create', validate(createValidation), createOne);
+router.patch('/update/:id', validate(updateValidation), updateOne);
 
 module.exports = router;

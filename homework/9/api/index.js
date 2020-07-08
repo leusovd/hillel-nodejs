@@ -1,5 +1,4 @@
 const { Router } = require('express');
-const { checkAuth } = require('./middlewares');
 const router = new Router();
 
 router.use('/auth', require('./auth/index.js'));

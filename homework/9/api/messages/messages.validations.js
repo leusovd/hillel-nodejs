@@ -3,13 +3,12 @@ const { Segments } = require('celebrate');
 
 exports.messagePostValidation = {
     [Segments.BODY]: {
-        text: joi.string().required()
+        text: joi.string().required().trim()
     }
 }
 
 exports.messageUpdateValidation = {
     [Segments.BODY]: {
-        _id: joi.string().required(),
         text: joi.string().required()
     }
 }

@@ -1,5 +1,4 @@
 const { celebrate } = require('celebrate');
-const MessageModel = require('./messages/messages.model');
 const { pushReqData } = require('../helpers/request-logger');
 const dateFormat = require('dateformat');
 
@@ -14,14 +13,6 @@ exports.validate = (schema) => {
         })(req, res, next);
     }
 };
-
-exports.checkAuth = (req, res, next) => {
-    if (req.session.user) {
-        next();
-    } else {
-        res.redirect('/login');
-    }
-}
 
 exports.handleMessagesQueryParams = (req, res, next) => {
     let { sort, sortValue, limit, skip } = req.query;
@@ -41,7 +32,7 @@ exports.handleMessagesQueryParams = (req, res, next) => {
     });
 
     next();
-}
+};
 
 exports.getReqInfo = (req, res, next) => {
     const start = Date.now();
@@ -59,4 +50,40 @@ exports.getReqInfo = (req, res, next) => {
 	res.on('close', afterResponse);
 
 	next();
+};
+
+exports.authGateReverse = (req, res, next) => {
+    if (req.session.user) {
+        return res.redirect(302, '/');
+    }
+
+    next();
+};
+
+exports.authGate = (req, res, next) => {
+    if (req.session.user) {
+        next();
+    } else {
+        res.redirect(401, '/login');
+    }
+};
+
+exports.adminGuard = (req, res, next) => {
+    const user = req.session.user;
+
+    if (!user || (user.role !== 'admin' && user.role !== 'superadmin')) {
+        res.redirect('back');
+    } else {
+        next();
+    }
+};
+
+exports.roleDowngradePermissionGuard = (req, res, next) => {
+    const user = req.session.user;
+
+    if (!user || !user.permissions.roleChange) {
+        throw { message: 'Not allowed' };
+    } else {
+        next();
+    }
 }

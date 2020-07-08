@@ -1,10 +1,10 @@
 const { compareSync } = require('bcryptjs');
-const UsersModel = require('../users/users.model');
+const UserModel = require('../users/users.model');
 
 exports.authLogin = async (req, res, next) => {
     try {
         const { email, password } = req.body;
-        const user = await UsersModel.findOne({ email }).lean().exec();
+        const user = await UserModel.findOne({ email }).lean().exec();
 
         if (!user) {
             throw { status: 404, message: 'User not found'};

@@ -6,12 +6,15 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-    min-height: 100vh;
+    min-height: calc(100vh - 45px);
     height: 100%;
     padding: 150px 0 0;
 }
 
 .site-header {
+    display: flex;
+    align-items: center;
+    height: 45px;
     background: rgba(191, 191, 191, .5);
 }
 
@@ -61,7 +64,7 @@ body {
     padding: 20px;
     background: url('../img/Background/y-so-serious-white.png');
     border: 1px solid rgba(54, 51, 51, .6);
-    border-radius: 12px;
+    border-radius: 8px;
     overflow: auto;
 }
 .messenger_controls {
@@ -77,7 +80,7 @@ body {
     margin: 0 0 10px;
     background: rgba(191, 191, 191, .3);
     border: 1px solid rgba(54, 51, 51, .6);
-    border-radius: 12px;
+    border-radius: 8px;
     resize: none;
     overflow: auto;
 }

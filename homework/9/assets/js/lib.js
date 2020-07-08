@@ -1,113 +1,6 @@
 let singleton = Symbol();
 let singletonEnforcer = Symbol();
 
-class MessageService {
-    constructor(enforcer) {
-        if (enforcer !== singletonEnforcer) {
-            throw "Instantiation failed: use Singleton.getInstance() instead of new.";
-        }
-
-        this.$viewport = null;
-
-        this.url = location.origin + '/api/messages';
-        this.messages = [];
-    }
-
-    static get instance() {
-        if (!this[singleton]) {
-            this[singleton] = new MessageService(singletonEnforcer);
-        }
-
-        return this[singleton];
-    }
-
-    static set instance(v) { throw "Can't change constant property!" }
-
-    setViewport($query) {
-        this.$viewport = this.$viewport || $query;
-    }
-
-    // Db request methods
-    getAll() {
-        return $.ajax({
-            method: 'get',
-            url: this.url,
-            success: res => {
-                res.data.forEach(messageData => {
-                    this.setMessage(messageData);
-                });
-                this.scrollToLastMessage();
-            },
-            error: err => {
-                console.error(err);
-            }
-        });
-    }
-
-    post(message) {
-        return $.ajax({
-            method: 'post',
-            url: `${this.url}/post`,
-            data: message,
-            success: (res) => {
-                this.setMessage(res.data);
-                this.scrollToLastMessage();
-            },
-            error: (err) => {
-                console.error(err);
-            }
-        });
-    }
-
-    update(_id, text) {
-        return $.ajax({
-            method: 'patch',
-            url: `${this.url}/update`,
-            data: { _id, text },
-            error: (err) => {
-                console.error(err);
-            }
-        });
-    }
-
-    delete(_id) {
-        return $.ajax({
-            method: 'delete',
-            url: `${this.url}/delete`,
-            data: { _id },
-            error: err => {
-                console.error(err);
-            }
-        }).then(() => {
-            this.messages = this.messages.filter(message => message._id !== _id);
-            this.scrollToLastMessage();
-        });
-    }
-
-    // Helpers
-    setMessage(messageData) {
-        const messageParams = Object.assign(messageData, {
-            $viewport: this.$viewport,
-            updateRecord: (_id, text) => {
-                return this.update(_id, text);
-            },
-            deleteRecord: _id => {
-                return this.delete(_id);
-            },
-            scrollToBottom: () => {
-                this.scrollToLastMessage();
-            }
-        });
-
-        this.messages.push(new Message(messageParams));
-    }
-
-    scrollToLastMessage() {
-        this.$viewport = this.$viewport || this.$root.find('.messenger_viewport');
-        this.$viewport.scrollTop(9999);
-    }
-}
-
 class Message {
     constructor({
         $viewport,
@@ -177,7 +70,7 @@ class Message {
         const htmlStr = (`<li class="message-list_item message" data-id="${_id}">
                 <div class="message_header">
                     <div class="field-group">
-                        <span class="message_author">${author}</span>
+                        ${author ? '<span class="message_author">' + author + '</span>' : ''}                        
                         <span class="message_date">${createdAt}</span>
                     </div>
                     ${btnGroupHtmlStr}
@@ -273,6 +166,112 @@ class Message {
                 this.removeHtml();
             });
         });
+    }
+}
+
+class MessageService {
+    constructor(enforcer) {
+        if (enforcer !== singletonEnforcer) {
+            throw "Instantiation failed: use Singleton.getInstance() instead of new.";
+        }
+
+        this.$viewport = null;
+
+        this.url = location.origin + '/api/messages';
+        this.messages = [];
+    }
+
+    static get instance() {
+        if (!this[singleton]) {
+            this[singleton] = new MessageService(singletonEnforcer);
+        }
+
+        return this[singleton];
+    }
+
+    static set instance(v) { throw "Can't change constant property!" }
+
+    setViewport($query) {
+        this.$viewport = this.$viewport || $query;
+    }
+
+    // Db request methods
+    getAll() {
+        return $.ajax({
+            method: 'get',
+            url: this.url,
+            success: res => {
+                res.data.forEach(messageData => {
+                    this.setMessage(messageData);
+                });
+                this.scrollToLastMessage();
+            },
+            error: err => {
+                console.error(err);
+            }
+        });
+    }
+
+    post(message) {
+        return $.ajax({
+            method: 'post',
+            url: `${this.url}/post`,
+            data: message,
+            success: (res) => {
+                this.setMessage(res.data);
+                this.scrollToLastMessage();
+            },
+            error: (err) => {
+                console.error(err);
+            }
+        });
+    }
+
+    update(_id, text) {
+        return $.ajax({
+            method: 'patch',
+            url: `${this.url}/update/${_id}`,
+            data: { text },
+            error: (err) => {
+                console.error(err);
+            }
+        });
+    }
+
+    delete(_id) {
+        return $.ajax({
+            method: 'delete',
+            url: `${this.url}/delete/${_id}`,
+            error: err => {
+                console.error(err);
+            }
+        }).then(() => {
+            this.messages = this.messages.filter(message => message._id !== _id);
+            this.scrollToLastMessage();
+        });
+    }
+
+    // Helpers
+    setMessage(messageData) {
+        const messageParams = Object.assign(messageData, {
+            $viewport: this.$viewport,
+            updateRecord: (_id, text) => {
+                return this.update(_id, text);
+            },
+            deleteRecord: _id => {
+                return this.delete(_id);
+            },
+            scrollToBottom: () => {
+                this.scrollToLastMessage();
+            }
+        });
+
+        this.messages.push(new Message(messageParams));
+    }
+
+    scrollToLastMessage() {
+        this.$viewport = this.$viewport || this.$root.find('.messenger_viewport');
+        this.$viewport.scrollTop(9999);
     }
 }
 
