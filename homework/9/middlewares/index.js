@@ -34,7 +34,7 @@ exports.handleMessagesQueryParams = (req, res, next) => {
     next();
 };
 
-exports.getReqInfo = (req, res, next) => {
+exports.requestInfo = (req, res, next) => {
     const start = Date.now();
 
 	const afterResponse = () => {

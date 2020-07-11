@@ -1,14 +1,15 @@
 const express = require("express");
 const app = express();
+const mongoose = require("mongoose");
 const path = require("path");
 const nunjucks = require("nunjucks");
 const session = require("cookie-session");
-const { getReqInfo } = require('./middlewares/index.js');
+const MongoStore = require('connect-mongo')(session);
+const { requestInfo } = require('./middlewares/index.js');
 const { setIntervalLogging } = require('./helpers/request-logger.js');
 
 process.env.ROOT_PATH = __dirname;
-require('./helpers/constants');
-require('./helpers/connection');
+require('./helpers/constants')
 
 const NODE_ENV = process.env.NODE_ENV || 'dev';
 const PORT = process.env.PORT;
@@ -19,8 +20,24 @@ nunjucks.configure(path.join(__dirname, "templates"), {
     watch: true,
 });
 
+mongoose.connect(
+    "mongodb+srv://leusovd:qwerty123@mynode.ftonf.mongodb.net/hillel-node",
+    {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+        useCreateIndex: true,
+    }
+);
+
+mongoose.set("debug", true);
+
+mongoose.connection.on("error", (e) => {
+    console.error("MongoDB error:", e);
+    process.exit(1);
+});
+
 if (NODE_ENV === 'dev') {
-    app.use(getReqInfo);
+    app.use(requestInfo);
 }
 
 app.use(express.urlencoded({ extended: true }));
@@ -33,7 +50,11 @@ app.use(
     session({
         name: "user",
         keys: ["d41d8cd98f00b204e9800998ecf8427e"],
-        maxAge: 24 * 60 * 60 * 1000, // 24 hours
+        maxAge: 24 * 60 * 60 * 1000, // 24 hours,
+        store: new MongoStore({
+            mongooseConnection: mongoose.connection,
+            stringify: true
+        })
     })
 );
 
