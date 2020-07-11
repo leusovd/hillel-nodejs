@@ -3,7 +3,7 @@ const app = express();
 const mongoose = require("mongoose");
 const path = require("path");
 const nunjucks = require("nunjucks");
-const session = require("cookie-session");
+const session = require("express-session");
 const MongoStore = require('connect-mongo')(session);
 const { requestInfo } = require('./middlewares/index.js');
 const { setIntervalLogging } = require('./helpers/request-logger.js');
@@ -48,9 +48,10 @@ app.use('/assets', require('./routes/assets.js'));
 // Cookie-session
 app.use(
     session({
-        name: "user",
-        keys: ["d41d8cd98f00b204e9800998ecf8427e"],
-        maxAge: 24 * 60 * 60 * 1000, // 24 hours,
+        secret: 'd41d8cd98f00b204e9800998ecf8427e',
+        resave: true,
+        saveUninitialized: true,
+        cookie: { maxAge: 24 * 60 * 60 * 1000 }, // 24 hours,
         store: new MongoStore({
             mongooseConnection: mongoose.connection,
             stringify: false
