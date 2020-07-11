@@ -53,7 +53,7 @@ app.use(
         maxAge: 24 * 60 * 60 * 1000, // 24 hours,
         store: new MongoStore({
             mongooseConnection: mongoose.connection,
-            stringify: true
+            stringify: false
         })
     })
 );
