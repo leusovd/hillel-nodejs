@@ -33,14 +33,14 @@ exports.getAll = async (req, res, next) => {
         let messageList = await MessageModel
             .find({ deletedAt: null })
             .populate('author')
+            .sort(sortOpts)
             .skip(skip)
             .limit(limit)
-            .sort(sortOpts)
             .lean()
             .exec();
     
         res.send({ 
-            data: messageList.map(message => {
+            data: messageList.reverse().map(message => {
                 message.user = req.user;
                 return formatForResponse(message)
             }) 

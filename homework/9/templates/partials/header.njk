@@ -21,7 +21,9 @@
                                     {% if active == 'panel' %}
                                         <a href="/admin" class="dropdown-item{% if pageName == 'adminDashboard' %} active{% endif %}">Dashboard</a>
                                         <a href="/admin/profile" class="dropdown-item{% if pageName == 'adminProfile' %} active{% endif %}">User Profile</a>
-                                        <a href="/admin/accounts" class="dropdown-item{% if pageName == 'adminAccounts' %} active{% endif %}">Accounts</a>
+                                        {% if user.role != 'user' %}
+                                            <a href="/admin/accounts" class="dropdown-item{% if pageName == 'adminAccounts' %} active{% endif %}">Accounts</a>
+                                        {% endif %}
                                         <a href="/admin/settings" class="dropdown-item{% if pageName == 'adminSettings' %} active{% endif %}">Settings</a>
                                     {% else %}
                                         <a href="/admin" class="dropdown-item">Panel</a>

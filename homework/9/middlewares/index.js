@@ -18,7 +18,7 @@ exports.handleMessagesQueryParams = (req, res, next) => {
     let { sort, sortValue, limit, skip } = req.query;
 
     sort = sort && (typeof sort === 'string') ? sort : 'createdAt';
-    sortValue = sortValue && (sortValue === 'asc' || sortValue === 'desc') ? sortValue : 'asc';
+    sortValue = sortValue && (sortValue === 'asc' || sortValue === 'desc') ? sortValue : 'desc';
 
     const sortOpts = {};
     sortOpts[sort] = sortValue;

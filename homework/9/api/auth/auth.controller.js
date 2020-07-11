@@ -8,5 +8,6 @@ exports.authLogin = async (req, res, next) => {
 
 exports.authLogout = (req, res, next) => {
     req.logout();
+    req.session.destroy();
     res.redirect('/');
 }

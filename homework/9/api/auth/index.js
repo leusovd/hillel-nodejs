@@ -12,7 +12,6 @@ router.post(
     passport.authenticate("local", {
         passReqToCallback: true,
         successRedirect: "/"
-        // usernameField: 'email'
     }),
     authLogin
 );
