@@ -1,7 +1,7 @@
 const { Router } = require("express");
 const dateFormat = require("dateformat");
-const UserModel = require("../../api/users/users.model");
-const { adminGuard } = require('../../middlewares/index');
+const UserModel = require("../api/users/users.model");
+const { adminGuard } = require('../middlewares/index');
 const router = new Router();
 
 router.get("/", (req, res) => {
@@ -9,23 +9,23 @@ router.get("/", (req, res) => {
         pageName: "adminDashboard",
         title: "Admin Panel",
         active: "panel",
-        user: req.session.user,
+        user: req.user,
     });
 });
 
 router.get("/accounts", adminGuard, async (req, res, next) => {
-    const authorizedUser = req.session.user;
+    const authorizedUser = req.user;
 
     try {
         let userList = await UserModel.find({
             _id: { $ne: authorizedUser._id }
-        }).lean().exec();
+        }).populate('messages').lean().exec();
 
         userList = userList.map(user => {
             const mappedUserObj = Object.assign(user, {
                 accountStateCapitalized: user.accountState.charAt(0).toUpperCase() + user.accountState.slice(1),
                 roleCapitalized: user.role.charAt(0).toUpperCase() + user.role.slice(1),
-                messagesCount: user.messages.length,
+                messagesCount: user.messages.filter(message => message.deletedAt === null).length,
                 createdAt: dateFormat(user.createdAt, "dd mmm yyyy"),
             });
             delete mappedUserObj.messages;
@@ -70,7 +70,7 @@ router.get("/accounts/:id", adminGuard, async (req, res, next) => {
             pageName: "adminAccountDetails",
             title: "Admin Panel",
             active: "panel",
-            user: req.session.user,
+            user: req.user,
             selectedUser,
             selectedUserMessages: selectedUser.messages,
         });

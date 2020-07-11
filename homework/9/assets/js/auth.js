@@ -13,8 +13,6 @@ function addLoginEvent() {
     const $form = $('#login-form');
 
     if (!$form.length) return;
-
-    const $submit = $form.find('#login-submit');
     
     $form.on('submit', e => {
         e.preventDefault();
@@ -38,8 +36,6 @@ function addLoginEvent() {
 
 function addRegistrationEvent() {
     const $form = $('#reg-form');
-
-    const $submit = $form.find('#reg-submit');
     
     $form.on('submit', e => {
         e.preventDefault();

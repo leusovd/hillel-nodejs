@@ -1,7 +1,7 @@
 const { Router } = require('express');
 const router = new Router();
 
-const { validate, handleMessagesQueryParams, authGate } = require('../../middlewares/index.js');
+const { validate, handleMessagesQueryParams } = require('../../middlewares/index.js');
 const { messagePostValidation, messageUpdateValidation } = require('./messages.validations');
 const { getAll, postOne, updateOne, deleteOne, deleteAll } = require('./messages.controller');
 

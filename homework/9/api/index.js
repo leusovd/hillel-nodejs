@@ -1,9 +1,10 @@
 const { Router } = require('express');
+const { authGuard } = require('../middlewares/index');
 const router = new Router();
 
 router.use('/auth', require('./auth/index.js'));
 router.use('/users', require('./users/index.js'));
-router.use('/messages', require('./messages/index.js'));
+router.use('/messages', authGuard, require('./messages/index.js'));
 
 // Global error handler
 router.use((err, req, res, next) => {

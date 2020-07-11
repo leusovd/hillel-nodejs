@@ -52,16 +52,16 @@ exports.requestInfo = (req, res, next) => {
 	next();
 };
 
-exports.authGateReverse = (req, res, next) => {
-    if (req.session.user) {
+exports.authGuardReverse = (req, res, next) => {
+    if (req.user) {
         return res.redirect(302, '/');
     }
 
     next();
 };
 
-exports.authGate = (req, res, next) => {
-    if (req.session.user) {
+exports.authGuard = (req, res, next) => {
+    if (req.user) {
         next();
     } else {
         res.redirect(401, '/login');
@@ -69,7 +69,7 @@ exports.authGate = (req, res, next) => {
 };
 
 exports.adminGuard = (req, res, next) => {
-    const user = req.session.user;
+    const user = req.user;
 
     if (!user || (user.role !== 'admin' && user.role !== 'superadmin')) {
         res.redirect('back');
@@ -79,7 +79,7 @@ exports.adminGuard = (req, res, next) => {
 };
 
 exports.roleDowngradePermissionGuard = (req, res, next) => {
-    const user = req.session.user;
+    const user = req.user;
 
     if (!user || !user.permissions.roleChange) {
         throw { message: 'Not allowed' };

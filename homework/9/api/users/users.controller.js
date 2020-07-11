@@ -20,7 +20,7 @@ exports.createOne = async (req, res, next) => {
         const user = new UserModel({ email, password, role });    
         await user.save();
 
-        req.session.user = user;
+        req.user = user;
 
         res.send({ status: 'ok', id: user.id });
     } catch (e) {

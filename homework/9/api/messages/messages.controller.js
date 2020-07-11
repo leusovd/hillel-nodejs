@@ -8,17 +8,17 @@ exports.postOne = async (req, res, next) => {
     try {
         let message = new MessageModel({
             text,
-            author: req.session.user._id
+            author: req.user._id
         });
         await message.save();
 
         await UserModel.updateOne(
-            { _id: req.session.user._id }, 
+            { _id: req.user._id }, 
             { $push: { messages: message._id }}
         );
 
-        req.session.user.messages.push(message._id);
-        message.user = req.session.user;
+        req.user.messages.push(message._id);
+        message.user = req.user;
 
         res.send({ data: formatForResponse(message) });
     } catch (e) {
@@ -41,7 +41,7 @@ exports.getAll = async (req, res, next) => {
     
         res.send({ 
             data: messageList.map(message => {
-                message.user = req.session.user;
+                message.user = req.user;
                 return formatForResponse(message)
             }) 
         });
@@ -62,7 +62,7 @@ exports.updateOne = async (req, res, next) => {
         ).lean().exec();  
         
         message.text = text;
-        message.user = req.session.user;
+        message.user = req.user;
         
         res.send({ data: formatForResponse(message) });
     } catch (e) {
@@ -84,7 +84,7 @@ exports.deleteOne = async (req, res, next) => {
 }
 
 exports.deleteAll = async (req, res, next) => {
-    const user = req.session.user;
+    const user = req.user;
     const authorId = req.query.authorId;
     let messages;
 
