@@ -120,7 +120,7 @@ class Settings {
 	}
 
 	getDefaults() {
-		fetch(`${location.origin}/messages/settings`)
+    fetch(`${location.origin}/messages/settings`)
 			.then(res => res.json())
 			.then(data => {
 				if (data.status === 'ok') {

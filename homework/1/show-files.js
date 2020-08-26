@@ -33,7 +33,7 @@ function recursive(currentPath, level = 0) {
 		// Then output it into the console
 		if (
 			dirent[i].isFile() &&
-			(ext.includes(path.extname(dirent[i].name)) || !params.ext.length)
+			(params.ext.includes(path.extname(dirent[i].name)) || !params.ext.length)
 		) {
 			const filePrefix = dirPrefix.replace(/\+/g, '-');
 			console.log(filePrefix + dirent[i].name);
