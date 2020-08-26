@@ -2,7 +2,7 @@ const { writeLog } = require('./log.js');
 
 const requests = [];
 
-exports.setIntervalLogging = function () {
+exports.setIntervalLog = function () {
 	setInterval(() => {
 		if (requests.length) {
 

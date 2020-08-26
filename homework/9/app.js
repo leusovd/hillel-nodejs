@@ -3,7 +3,7 @@ const express = require("express");
 const nunjucks = require("nunjucks");
 const mongoose = require("mongoose");
 const app = express();
-const { setIntervalLogging } = require('./helpers/request-logger.js');
+const { setIntervalLog } = require('./helpers/request-logger.js');
 require('./helpers/constants');
 
 nunjucks.configure(path.join(__dirname, "templates"), {
@@ -38,6 +38,6 @@ app.listen(process.env.PORT || 3000, () => {
     console.log(`Server started on ${process.env.PORT || 3000}`);
     
     if (process.env.NODE_ENV === 'dev') {
-        setIntervalLogging();
+        setIntervalLog();
     }
 });
